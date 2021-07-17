@@ -68,7 +68,6 @@ textInput.trigger("focus");
 /*
 SAVES AND UPDATES TASK
 */
-
 $(".list-group").on("blur", "textarea", function() {
   const text = $(this).val().trim();
   // get the parent ul's id attribute
@@ -77,8 +76,49 @@ $(".list-group").on("blur", "textarea", function() {
   const index = $(this).closest(".list-group-item").index();
   // use variable names as placeholders to identify the correct array item
   tasks[status][index].text = text;
+  // updates and saves tasks
   saveTasks();
+// turns text area back into a <p>
+const taskP = $("<p>").addClass("m-1").text(text);
+$(this).replaceWith(taskP);
 });
+
+/*
+EDIT DUE DATES
+*/
+
+// due date was clicked
+$(".list-group").on("click", "span", function() {
+  // get current date
+  const date = $(this).text().trim();
+  // create a new input element
+  const dateInput = $("<input>").attr("type", "text").addClass("form-control").val(date);
+  // put input field on the page
+  $(this).replaceWith(dateInput);
+  // auto focus on new element
+  dateInput.trigger("focus");
+});
+
+/*
+CHANGE DATE BACK TOPILL BADGE AFTER EDIT
+*/
+// date has changed ! square brackets to specify the target element
+$(".list-group").on("blur", "input[type='text']", function() {
+  // get current date
+  const date = $(this).val().trim();
+  // get the parent ul's id attribute
+  const status = $(this).closest(".list-group").attr("id").replace("list-", "");
+  // get the task's position in the list of other li elements
+  const index = $(this).closest(".list-group-item").index();
+  // update task in array and re-save to localstorage
+  tasks[status][index].date = date;
+  saveTasks();
+  // recreate span element with bootstrap classes
+  var taskSpan = $("<span>").addClass("badge badge-primary badge-pill").text(date);
+  // replace input with span element
+  $(this).replaceWith(taskSpan);
+});
+
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
