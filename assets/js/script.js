@@ -119,6 +119,74 @@ $(".list-group").on("blur", "input[type='text']", function() {
   $(this).replaceWith(taskSpan);
 });
 
+/*
+DRAG & DROP FUNCTION
+SORTABLE
+*/
+// 
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  helper: "clone",
+  activate: function(event) {
+    console.log("activate", this);
+  },
+  deactivate: function(event) {
+    console.log("deactivate", this);
+  },
+  over: function(event) {
+    console.log("over", event.target);
+  },
+  out: function(event) {
+    console.log("out", event.target);
+  },
+  // saves the tasks in their new spot
+  update: function(event) {
+    // holds the task data after its moved
+    let tempArr = [];
+
+    // loop over the current set of children in sortable list *this= ul element*
+    $(this).children().each(function() {
+      // task text *this = the li elements
+      const text = $(this).find("p").text().trim();
+      // task date
+      const date = $(this).find("span").text().trim();
+      // add the task data to the temp arr as an object
+      tempArr.push({
+        text: text,
+        date: date
+      });
+    });
+    console.log("tempArr", tempArr);
+    // trim down the list's ID to match the object property
+    const arrName = $(this).attr("id").replace("list-", "");
+    // update array on tasks object and save
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+
+});
+
+/*
+TRASH DROPPABLE
+*/
+
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  drop: function(event, ui) {
+    ui.draggable.remove();
+    console.log("drop");
+  },
+  over: function(event, ui) {
+    console.log("over");
+  },
+  out: function(event, ui) {
+    console.log("out");
+  }
+});
+
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
