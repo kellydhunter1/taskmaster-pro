@@ -142,9 +142,13 @@ $(".card .list-group").sortable({
   tolerance: "pointer",
   helper: "clone",
   activate: function(event) {
+    $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag");
     console.log("activate", this);
   },
   deactivate: function(event) {
+    $(this).remove(".dropover");
+    $(this).remove(".bottom-trash-drag");
     console.log("deactivate", this);
   },
   over: function(event) {
@@ -189,12 +193,15 @@ $("#trash").droppable({
   tolerance: "touch",
   drop: function(event, ui) {
     ui.draggable.remove();
+    $(".bottom-trash").remove(".bottom-trash-active");
     console.log("drop");
   },
   over: function(event, ui) {
+    $(this).addClass("bottom-trash-active");
     console.log("over");
   },
   out: function(event, ui) {
+    $(".bottom-trash").remove(".bottom-trash-active");
     console.log("out");
   }
 });
@@ -232,6 +239,12 @@ const auditTask = function(taskEl) {
       $(taskEl).addClass("list-group-item-warning");
     }
 };
+
+setInterval(function() {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+}, (1000 * 60) *30);
 
 
 // modal was triggered
